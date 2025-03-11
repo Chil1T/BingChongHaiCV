@@ -47,7 +47,7 @@ python scripts/start_demo.py
 
 ## 技术报告
 
-详细的实验分析和可视化结果请参见[技术报告](docs/technical_report.pdf)。
+详细的实验分析和可视化结果请参见[技术报告](docs/technical_report.md)。
 
 ## 许可证
 
