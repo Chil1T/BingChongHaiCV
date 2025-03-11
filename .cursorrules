@@ -1,0 +1,101 @@
+{
+  "$schema": "https://cursor.directory/schema/v1",
+  "rules": [
+    // ==================== 深度学习模块规则 ====================
+    {
+      "name": "Deep Learning Rules",
+      "pathPatterns": ["model/**/*.py", "notebooks/*.ipynb"],  // 仅作用于模型相关文件
+      "rules": {
+        "custom": {
+          "framework": "PyTorch",
+          "requiredComponents": [
+            "DataLoader(batch_size=32)",
+            "torch.save(model.module.state_dict())",  // 分布式训练兼容
+            "早停法(EarlyStopping)"
+          ],
+          "forbiddenPatterns": [
+            "torch.load(..., map_location='cpu')缺失",  // 强制设备兼容
+            "未归一化的ImageNet输入"
+          ],
+          "augmentation": {
+            "library": "albumentations",
+            "requiredTransforms": ["RandomResizedCrop", "HorizontalFlip"]
+          }
+        },
+        "formatting": {
+          "maxLineLength": 120  // Jupyter Notebook需要更宽行宽
+        }
+      }
+    },
+
+    // ==================== 前端规则 ====================
+    {
+      "name": "React Frontend Rules",
+      "pathPatterns": ["frontend/src/**/*.{ts,tsx}"],  // 仅TS/TSX文件生效
+      "rules": {
+        "component": {
+          "naming": "PascalCase",  // 组件强制大驼峰命名
+          "requiredProps": ["className", "testId"]  // 统一测试标识
+        },
+        "api": {
+          "endpoints": {
+            "/api/upload": {
+              "method": "POST",
+              "headers": ["Content-Type: multipart/form-data"]
+            },
+            "/api/history": {
+              "queryParams": ["page=1", "size=10"]
+            }
+          }
+        },
+        "security": {
+          "imageUpload": {
+            "sanitizeFilename": true,  // 强制文件名哈希处理
+            "maxSize": "10MB"
+          }
+        }
+      }
+    },
+
+    // ==================== 后端规则 ====================
+    {
+      "name": "Flask Backend Rules",
+      "pathPatterns": ["backend/**/*.py"],
+      "rules": {
+        "validation": {
+          "fileUpload": {
+            "allowedTypes": ["image/jpeg", "image/png"],
+            "scanVirus": true  // 提醒集成病毒扫描
+          }
+        },
+        "logging": {
+          "format": "%(asctime)s - %(levelname)s - %(message)s",  // 统一日志格式
+          "rotate": "100MB"  // 自动日志轮转
+        },
+        "response": {
+          "successTemplate": {
+            "status": 200,
+            "data": "...",
+            "inference_time": "单位：毫秒"  // 性能监控需求
+          }
+        }
+      }
+    },
+
+    // ==================== 全局兜底规则 ====================
+    {
+      "name": "Global Fallback",
+      "pathPatterns": ["**/*"],  // 匹配所有文件
+      "rules": {
+        "security": {
+          "excludePatterns": [".env", "*.pth"],  // 保护模型和配置
+          "allowedDomains": ["localhost:*"]  // 仅限本地调试
+        },
+        "completion": {
+          "temperature": 0.3,
+          "preferLibraries": ["PyTorch", "Flask", "Prisma"]  // 技术栈优先级
+        }
+      }
+    }
+  ]
+} 
