@@ -7,11 +7,12 @@ import './Uploader.module.css';  // 导入CSS模块
 interface UploaderProps {
   className?: string;
   testId: string;
-  onResult: (result: any) => void;
+  onResult: (result: any, imageUrl: string) => void;
 }
 
 const Uploader: React.FC<UploaderProps> = ({ className = 'plant-disease-uploader', testId, onResult }) => {
   const [loading, setLoading] = useState(false);
+  const [previewUrl, setPreviewUrl] = useState<string | null>(null);
 
   const beforeUpload = (file: File) => {
     const isImage = file.type.startsWith('image/');
@@ -24,6 +25,11 @@ const Uploader: React.FC<UploaderProps> = ({ className = 'plant-disease-uploader
       message.error('图片大小不能超过5MB！');
       return false;
     }
+
+    // 创建预览URL
+    const imageUrl = URL.createObjectURL(file);
+    setPreviewUrl(imageUrl);
+    
     return true;
   };
 
@@ -31,7 +37,12 @@ const Uploader: React.FC<UploaderProps> = ({ className = 'plant-disease-uploader
     try {
       setLoading(true);
       const result = await uploadImage(file);
-      onResult(result);
+      
+      // 创建图片URL用于显示
+      const imageUrl = URL.createObjectURL(file);
+      
+      // 传递结果和图片URL
+      onResult(result, imageUrl);
       message.success('识别成功！');
     } catch (error) {
       message.error('识别失败，请重试！');
@@ -50,10 +61,13 @@ const Uploader: React.FC<UploaderProps> = ({ className = 'plant-disease-uploader
           beforeUpload={beforeUpload}
           customRequest={({ file }) => handleUpload(file as File)}
         >
-          <Button icon={<UploadOutlined />} size="large">
+          <Button icon={<UploadOutlined />} size="large" type="primary" block>
             上传植物图片
           </Button>
         </Upload>
+        <div style={{ marginTop: 16, textAlign: 'center' }}>
+          <p>支持JPG、PNG格式，文件小于5MB</p>
+        </div>
       </Spin>
     </div>
   );

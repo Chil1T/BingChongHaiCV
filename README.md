@@ -1,134 +1,53 @@
-# 植物病虫害图像识别系统
+# 植物病虫害智能识别系统
 
-基于深度学习的植物病虫害图像识别工具，使用PyTorch和React构建。
+基于ResNet50的深度学习植物病虫害识别系统，支持38种常见植物病害的高精度识别。
 
-## 功能特点
+## 研究价值
 
-- 支持多种常见植物病虫害的识别
-- 实时图像上传和预测
-- 友好的用户界面
-- Docker容器化部署
-- RESTful API设计
+植物病虫害每年导致全球约40%的作物减产。本研究通过深度学习实现快速、准确的自动识别，具有显著的生产、环境和经济价值。
 
-## 技术栈
+## 核心技术
 
-### 后端
-- Python 3.8
-- Flask
-- PyTorch
-- Pillow
-- NumPy
+- **数据**：PlantVillage数据集（54,305张图像，38类病害）
+- **模型**：ResNet50（残差连接、预训练权重）
+- **训练**：AdamW优化、余弦退火学习率、早停策略、混合精度
 
-### 前端
-- React
-- TypeScript
-- Ant Design
-- Axios
+## 实验结果
+
+- **准确率**：训练集99.90%，验证集99.70%
+- **效率**：1.2小时完成训练（T4 GPU）
+- **关键发现**：
+  1. 模型部分依赖背景信息进行识别
+  2. 存在一定过拟合但保持良好泛化能力
+
+## 系统实现
+
+- **前端**：React UI，实时预览，结果可视化
+- **后端**：Flask API，高效推理，完善错误处理
+
+## 未来方向
+
+- **架构优化**：探索Vision Transformer、引入注意力机制
+- **数据策略**：混合训练、真实场景增强、对比学习
+- **应用拓展**：移动部署、多模态融合、预警系统
 
 ## 快速开始
 
-### 使用Docker Compose（推荐）
-
-1. 克隆项目：
 ```bash
-git clone <repository-url>
-cd plant-disease-detection
+# 安装依赖
+pip install -r backend/requirements.txt
+cd frontend && npm install && cd ..
+
+# 启动服务
+python scripts/start_demo.py
+
+# 访问界面
+# http://localhost:3000
 ```
 
-2. 启动服务：
-```bash
-docker-compose up --build
-```
+## 技术报告
 
-3. 访问应用：
-- 前端界面：http://localhost:3000
-- API接口：http://localhost:5000
-
-### 手动安装
-
-1. 安装后端依赖：
-```bash
-cd backend
-pip install -r requirements.txt
-```
-
-2. 安装前端依赖：
-```bash
-cd frontend
-npm install
-```
-
-3. 启动后端服务：
-```bash
-cd backend
-flask run
-```
-
-4. 启动前端服务：
-```bash
-cd frontend
-npm start
-```
-
-## 项目结构
-
-```
-├── model/                 # 深度学习模块
-│   ├── train.py          # 模型训练脚本
-│   └── dataloader/       # 数据加载器
-├── frontend/             # 前端模块
-│   ├── src/
-│   │   ├── components/   # React组件
-│   │   └── api/         # API客户端
-│   └── public/
-├── backend/              # 后端模块
-│   ├── app/             
-│   │   ├── routes.py     # API路由
-│   │   └── utils/       # 工具函数
-│   └── requirements.txt  # Python依赖
-└── config/               # 配置文件
-```
-
-## API文档
-
-### POST /api/predict
-上传图片并获取预测结果
-
-请求：
-- Content-Type: multipart/form-data
-- Body: image文件
-
-响应：
-```json
-{
-  "predictions": [
-    {
-      "class": "病虫害类型",
-      "probability": 95.5
-    },
-    ...
-  ]
-}
-```
-
-## 模型训练
-
-1. 准备数据集：
-   - 将训练图像放在 `data/train` 目录
-   - 将验证图像放在 `data/val` 目录
-
-2. 开始训练：
-```bash
-python model/train.py
-```
-
-## 贡献指南
-
-1. Fork 项目
-2. 创建特性分支
-3. 提交改动
-4. 推送到分支
-5. 创建 Pull Request
+详细的实验分析和可视化结果请参见[技术报告](docs/technical_report.pdf)。
 
 ## 许可证
 

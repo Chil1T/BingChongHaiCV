@@ -2,57 +2,91 @@ import os
 import sys
 import logging
 from pathlib import Path
+import argparse
 
 # 添加项目根目录到Python路径
 project_root = Path(__file__).resolve().parent.parent
 sys.path.append(str(project_root))
 
-from model.utils.prepare_data import prepare_dataset
+from model.utils.dataset_sampler import DatasetSampler
+from model.config.train_config import TrainConfig
 
-if __name__ == "__main__":
+def parse_args():
+    """解析命令行参数"""
+    parser = argparse.ArgumentParser(description='准备训练数据集')
+    
+    parser.add_argument('--source-dir', type=str, required=True,
+                      help='源数据集目录路径')
+    parser.add_argument('--target-dir', type=str, default='data',
+                      help='处理后的数据集存放路径')
+    parser.add_argument('--sample-mode', type=str, choices=['percentage', 'fixed_size'],
+                      default='percentage',
+                      help='采样模式：按百分比或固定数量')
+    parser.add_argument('--sample-size', type=float, default=1.0,
+                      help='采样大小：百分比(0-1)或每类样本数量')
+    parser.add_argument('--val-split', type=float, default=0.2,
+                      help='验证集比例(0-1)')
+    parser.add_argument('--min-samples', type=int, default=10,
+                      help='每个类别的最小样本数')
+    parser.add_argument('--seed', type=int, default=42,
+                      help='随机种子')
+    parser.add_argument('--balanced', action='store_true',
+                      help='是否使用平衡采样')
+    
+    return parser.parse_args()
+
+def main():
+    # 解析命令行参数
+    args = parse_args()
+    
     # 配置日志
     logging.basicConfig(
         level=logging.INFO,
         format='%(asctime)s - %(levelname)s - %(message)s'
     )
     logger = logging.getLogger(__name__)
-
-    # 设置路径
-    source_dir = os.path.join(project_root, "datasets", "PlantVillage", "color")  # 使用彩色图像目录
-    target_dir = os.path.join(project_root, "data")
-    
-    # 数据集划分参数
-    test_size = 0.2  # 验证集比例
-    random_state = 42  # 随机种子
     
     try:
+        # 确保使用绝对路径
+        source_dir = os.path.abspath(args.source_dir)
+        target_dir = os.path.abspath(args.target_dir)
+        
+        logger.info(f"使用源目录: {source_dir}")
+        logger.info(f"使用目标目录: {target_dir}")
+        
         # 检查源目录是否存在
         if not os.path.exists(source_dir):
             logger.error(f"Source directory not found: {source_dir}")
-            logger.error("Please make sure you have placed the PlantVillage dataset in the correct location.")
+            logger.error("Please make sure you have placed the dataset in the correct location.")
             sys.exit(1)
             
-        # 检查数据集结构
-        categories = [d for d in os.listdir(source_dir) if os.path.isdir(os.path.join(source_dir, d))]
-        logger.info(f"Found {len(categories)} categories in the dataset:")
-        for category in categories:
-            category_path = os.path.join(source_dir, category)
-            num_images = len([f for f in os.listdir(category_path) if f.lower().endswith(('.png', '.jpg', '.jpeg'))])
-            logger.info(f"  - {category}: {num_images} images")
-            
-        # 运行数据预处理
-        logger.info("\nStarting dataset preparation...")
-        logger.info(f"Source directory: {source_dir}")
-        logger.info(f"Target directory: {target_dir}")
+        # 创建配置对象
+        config = TrainConfig()
         
-        prepare_dataset(
-            source_dir=source_dir,
-            target_dir=target_dir,
-            test_size=test_size,
-            random_state=random_state
-        )
+        # 更新配置
+        config.DATASET_SAMPLE_MODE = args.sample_mode
+        config.DATASET_SAMPLE_SIZE = args.sample_size
+        config.TRAIN_VAL_SPLIT = args.val_split
+        config.MIN_SAMPLES_PER_CLASS = args.min_samples
+        config.RANDOM_SEED = args.seed
+        config.BALANCED_SAMPLING = args.balanced
+        
+        # 设置目标路径
+        train_dir = os.path.join(target_dir, 'train')
+        val_dir = os.path.join(target_dir, 'val')
+        
+        # 创建采样器并处理数据集
+        logger.info("Starting dataset preparation...")
+        sampler = DatasetSampler(config)
+        sampler.process_dataset(source_dir, train_dir, val_dir)
+        
         logger.info("Dataset preparation completed successfully!")
         
     except Exception as e:
         logger.error(f"Error during dataset preparation: {str(e)}")
-        sys.exit(1) 
+        import traceback
+        logger.error(traceback.format_exc())
+        sys.exit(1)
+
+if __name__ == "__main__":
+    main() 
