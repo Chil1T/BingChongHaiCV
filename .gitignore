@@ -36,6 +36,7 @@ ENV/
 
 # Dataset and Models
 data/
+datasets/
 models/
 *.pth
 *.h5

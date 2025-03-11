@@ -1,19 +1,29 @@
 from typing import Dict, Any
 import torch
+from .base_config import BaseConfig
 
-class ColabTrainingConfig:
-    # 路径配置
-    DRIVE_ROOT = "/content/drive/MyDrive/plant_disease_project"
-    DATA_ROOT = f"{DRIVE_ROOT}/data"
-    MODEL_DIR = f"{DRIVE_ROOT}/models"
-    LOG_DIR = f"{DRIVE_ROOT}/logs"
+class ColabConfig(BaseConfig):
+    """Colab特化配置类"""
     
-    # 数据集配置
+    # 路径配置
+    DATA_ROOT = "/content/data"  # 修改为实际数据目录
+    MODEL_DIR = "/content/BingChongHaiCV/models"
+    LOG_DIR = "/content/BingChongHaiCV/logs"
+    
+    # 覆盖基础配置
     TRAIN_DIR = f"{DATA_ROOT}/train"
     VAL_DIR = f"{DATA_ROOT}/val"
+    BATCH_SIZE = 32  # 降低batch size以适应内存
+    NUM_WORKERS = 4  # 增加worker数量提高效率
+    EPOCHS = 50  # 增加训练轮数
+    
+    # 检查点配置
+    CHECKPOINT_DIR = MODEL_DIR
+    BEST_MODEL_PATH = f"{CHECKPOINT_DIR}/best_model.pth"
+    LAST_MODEL_PATH = f"{CHECKPOINT_DIR}/last_model.pth"
+    
+    # 数据集配置
     IMAGE_SIZE = 224
-    BATCH_SIZE = 64  # GPU版本可以用更大的batch size
-    NUM_WORKERS = 2  # Colab环境建议使用2-4
     PIN_MEMORY = True
     
     # 模型配置
@@ -22,7 +32,6 @@ class ColabTrainingConfig:
     NUM_CLASSES = 38  # 会在运行时更新
     
     # 训练配置
-    EPOCHS = 10  # 小数据集先跑10个epoch看效果
     LEARNING_RATE = 0.001
     WEIGHT_DECAY = 1e-4
     
@@ -47,7 +56,7 @@ class ColabTrainingConfig:
     }
     
     # 早停配置
-    EARLY_STOPPING_PATIENCE = 7
+    EARLY_STOPPING_PATIENCE = 10  # 增加早停耐心值
     EARLY_STOPPING_MIN_DELTA = 0.001
     
     # GPU训练配置
@@ -56,11 +65,6 @@ class ColabTrainingConfig:
     
     # 设备配置
     DEVICE = "cuda" if torch.cuda.is_available() else "cpu"
-    
-    # 检查点配置
-    CHECKPOINT_DIR = MODEL_DIR
-    BEST_MODEL_PATH = f"{CHECKPOINT_DIR}/best_model.pth"
-    LAST_MODEL_PATH = f"{CHECKPOINT_DIR}/last_model.pth"
     
     @classmethod
     def get_config(cls) -> Dict[str, Any]:
