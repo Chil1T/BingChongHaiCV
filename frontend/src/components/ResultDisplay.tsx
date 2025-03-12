@@ -1,6 +1,6 @@
 import React from 'react';
-import { Card, Typography, Tag, Progress, Divider, Descriptions, Empty, Alert } from 'antd';
-import { CheckCircleOutlined, WarningOutlined, InfoCircleOutlined } from '@ant-design/icons';
+import { Card, Typography, Tag, Progress, Divider, Descriptions, Empty, Alert, Button } from 'antd';
+import { CheckCircleOutlined, WarningOutlined, InfoCircleOutlined, ToolOutlined } from '@ant-design/icons';
 
 const { Title, Text, Paragraph } = Typography;
 
@@ -18,6 +18,8 @@ interface Result {
   data: ResultData;
   inference_time: number;
   error?: string;
+  demo_mode?: boolean;
+  error_message?: string;
 }
 
 interface ResultDisplayProps {
@@ -92,6 +94,40 @@ const ResultDisplay: React.FC<ResultDisplayProps> = ({ result }) => {
     );
   }
 
+  // 处理NumPy兼容性错误
+  if (result.error_message && result.error_message.includes("NumPy")) {
+    return (
+      <Card title="识别结果" bordered={false}>
+        <Alert
+          message="NumPy兼容性问题"
+          description={
+            <div>
+              <p>{result.error_message}</p>
+              <p>这是一个已知问题，可能是由于NumPy 2.0与PyTorch的兼容性问题导致的。</p>
+              <p>请按照以下步骤解决：</p>
+              <ol>
+                <li>以管理员身份运行 <code>fix_numpy.bat</code> 脚本</li>
+                <li>或手动降级NumPy到1.24.4版本: <code>pip install numpy==1.24.4</code></li>
+                <li>然后重启应用</li>
+              </ol>
+              <Button 
+                type="primary" 
+                icon={<ToolOutlined />}
+                onClick={() => window.open('https://github.com/pytorch/pytorch/issues/100974', '_blank')}
+              >
+                查看相关问题
+              </Button>
+            </div>
+          }
+          type="warning"
+          showIcon
+        />
+        <Divider />
+        <Text type="secondary">以下是演示模式下的结果（仅供参考）：</Text>
+      </Card>
+    );
+  }
+
   const topPrediction = result.data.predictions[0];
   const diseaseData = diseaseInfo[topPrediction.class] || defaultDiseaseInfo;
 
@@ -128,6 +164,9 @@ const ResultDisplay: React.FC<ResultDisplayProps> = ({ result }) => {
       <Paragraph>
         <Text strong>推理时间: </Text>
         <Text>{result.inference_time} 毫秒</Text>
+        {result.demo_mode && (
+          <Tag color="orange" style={{ marginLeft: 8 }}>演示模式</Tag>
+        )}
       </Paragraph>
 
       <Divider orientation="left">预测结果</Divider>
@@ -138,10 +177,10 @@ const ResultDisplay: React.FC<ResultDisplayProps> = ({ result }) => {
             <Tag color={getDiseaseTagColor(prediction.class)}>
               {formatClassName(prediction.class)}
             </Tag>
-            <Text strong>{prediction.probability.toFixed(2)}%</Text>
+            <Text strong>{prediction.probability.toFixed(1)}%</Text>
           </div>
           <Progress
-            percent={prediction.probability}
+            percent={Number(prediction.probability.toFixed(1))}
             status={index === 0 ? "active" : "normal"}
             strokeColor={index === 0 ? "#52c41a" : "#1890ff"}
           />

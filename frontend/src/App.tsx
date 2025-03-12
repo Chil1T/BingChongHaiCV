@@ -1,86 +1,56 @@
 import React, { useState } from 'react';
+import { Layout, Space } from 'antd';
 import Uploader from './components/Uploader';
 import ResultDisplay from './components/ResultDisplay';
-import { Layout, Typography, Card, Row, Col, Statistic } from 'antd';
-import { ExperimentOutlined, RocketOutlined } from '@ant-design/icons';
+import DiseaseGuide from './components/DiseaseGuide';
+import HistoryRecord from './components/HistoryRecord';
+import { PredictionResponse } from './api/client';
+import './App.css';
 
-const { Header, Content, Footer } = Layout;
-const { Title } = Typography;
+const { Header, Content } = Layout;
 
-interface Prediction {
-  class: string;
-  probability: number;
-}
-
-interface ResultData {
-  predictions: Prediction[];
-}
-
-interface Result {
-  status: number;
-  data: ResultData;
-  inference_time: number;
-  error?: string;
+interface HistoryItem {
+  id: string;
+  timestamp: string;
+  imageUrl: string;
+  result: PredictionResponse;
 }
 
 const App: React.FC = () => {
-  const [result, setResult] = useState<Result | null>(null);
-  const [imageUrl, setImageUrl] = useState<string | null>(null);
-  const [totalPredictions, setTotalPredictions] = useState<number>(0);
+  const [result, setResult] = useState<PredictionResponse | null>(null);
+  const [history, setHistory] = useState<HistoryItem[]>([]);
 
-  const handleResult = (resultData: Result, imageUrl: string) => {
-    setResult(resultData);
-    setImageUrl(imageUrl);
-    setTotalPredictions(prev => prev + 1);
+  const handleResult = (newResult: PredictionResponse, imageUrl: string) => {
+    setResult(newResult);
+    
+    // 添加到历史记录
+    const historyItem: HistoryItem = {
+      id: Date.now().toString(),
+      timestamp: new Date().toLocaleString(),
+      imageUrl,
+      result: newResult
+    };
+    setHistory(prev => [historyItem, ...prev]);
   };
 
   return (
-    <Layout style={{ minHeight: '100vh' }}>
-      <Header style={{ background: '#fff', padding: '0 50px' }}>
-        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-          <Title level={2} style={{ margin: '16px 0' }}>植物病虫害识别系统</Title>
-          <div style={{ display: 'flex', gap: '20px' }}>
-            <Statistic 
-              title="识别次数" 
-              value={totalPredictions} 
-              prefix={<ExperimentOutlined />} 
-              valueStyle={{ color: '#3f8600' }}
-            />
-            <Statistic 
-              title="支持疾病类型" 
-              value={38} 
-              prefix={<RocketOutlined />} 
-              valueStyle={{ color: '#1890ff' }}
-            />
-          </div>
-        </div>
+    <Layout className="app-container">
+      <Header className="app-header">
+        <h1>植物病虫害识别系统</h1>
+        <Space size="middle">
+          <DiseaseGuide />
+          <HistoryRecord records={history} />
+        </Space>
       </Header>
-      <Content style={{ padding: '0 50px', marginTop: 32 }}>
-        <Row gutter={[24, 24]}>
-          <Col xs={24} md={12}>
-            <Card title="上传图片" bordered={false}>
-              <Uploader testId="uploader" className="main-uploader" onResult={handleResult} />
-              
-              {imageUrl && (
-                <div style={{ marginTop: 20, textAlign: 'center' }}>
-                  <img
-                    src={imageUrl}
-                    alt="上传的图片"
-                    style={{ maxWidth: '100%', maxHeight: 300 }}
-                  />
-                </div>
-              )}
-            </Card>
-          </Col>
-          
-          <Col xs={24} md={12}>
-            <ResultDisplay result={result} />
-          </Col>
-        </Row>
+      <Content className="app-content">
+        <div className="main-container">
+          <Uploader
+            testId="plant-disease-uploader"
+            onResult={handleResult}
+          />
+          <ResultDisplay result={result} />
+        </div>
       </Content>
-      <Footer style={{ textAlign: 'center' }}>
-        植物病虫害识别系统 ©{new Date().getFullYear()} 基于深度学习的智能诊断
-      </Footer>
     </Layout>
   );
 };

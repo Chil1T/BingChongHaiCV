@@ -1,0 +1,50 @@
+.app-container {
+  min-height: 100vh;
+}
+
+.app-header {
+  background: #fff;
+  padding: 0 50px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.app-header h1 {
+  margin: 0;
+  color: #1890ff;
+  font-size: 24px;
+}
+
+.app-content {
+  padding: 24px 50px;
+}
+
+.main-container {
+  max-width: 1200px;
+  margin: 0 auto;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: 24px;
+}
+
+@media (max-width: 768px) {
+  .app-header {
+    padding: 0 20px;
+    flex-direction: column;
+    height: auto;
+    padding: 16px;
+  }
+
+  .app-header h1 {
+    margin-bottom: 16px;
+  }
+
+  .app-content {
+    padding: 16px;
+  }
+
+  .main-container {
+    grid-template-columns: 1fr;
+  }
+} 
