@@ -1,6 +1,7 @@
 # 植物病虫害智能识别系统 (Release Version)
 
-基于ResNet50的深度学习植物病虫害识别系统，支持38种常见植物病害的高精度识别。本版本为稳定发布版，专注于系统的部署和使用。
+基于ResNet50&kaggle plantvillage dataset color的深度学习植物病虫害识别系统，支持38种常见植物病害的高精度识别。本版本为预览发布版，专注于系统的部署和使用。
+详细模型的训练数据可见[技术报告](https://github.com/Chil1T/BingChongHaiCV/blob/release/docs/technical_report.md)
 
 ## 系统特点
 
@@ -17,14 +18,17 @@
 - 内存 >= 8GB
 - 硬盘空间 >= 2GB
 
-### 下载模型文件
+### 下载模型文件+clone仓库release分支/下载release界面压缩包直接运行
 
-在使用系统前，请先下载预训练模型文件：
+#### 下载预训练模型文件：
 
 1. 从以下链接下载模型文件：
-   [best_model.pth](https://your-model-hosting-url.com/best_model.pth)
+   [best_model.pth](https://github.com/Chil1T/BingChongHaiCV/releases/tag/%E6%A8%A1%E5%9E%8B%E6%96%87%E4%BB%B6)
    
 2. 将下载的`best_model.pth`文件放置在项目的`models/`目录下
+> 如果没有请自行创建一个
+#### 直接下载压缩包
+[BCHCVrelease.zip](https://github.com/Chil1T/BingChongHaiCV/releases/tag/%E9%A1%B9%E7%9B%AE)
 
 ### 安装与启动
 
@@ -40,6 +44,7 @@ start_admin.bat
 2. 仅启动应用（已安装依赖）
 
 #### 其他平台用户
+> 暂未测试，可能遇到依赖版本冲突
 
 ```bash
 # 1. 创建并激活虚拟环境
@@ -75,7 +80,7 @@ python start_app.py
 - 马铃薯：早疫病、晚疫病等
 - 番茄：叶霉病、斑点病等
 
-完整列表请参见[支持的病害类型](docs/supported_diseases.md)
+
 
 ## 项目结构
 
@@ -118,9 +123,9 @@ pip install -r requirements.txt -i https://pypi.tuna.tsinghua.edu.cn/simple
 ## 技术支持
 
 如遇问题，请：
-1. 查看[常见问题文档](docs/faq.md)
-2. 提交[Issue](https://github.com/Chil1T/BingChongHaiCV/issues)
-3. 发送邮件至技术支持邮箱
+1. 提交[Issue](https://github.com/Chil1T/BingChongHaiCV/issues)
+2. 发送邮件至技术支持邮箱 1379928025@qq.com
+
 
 ## 更新日志
 
