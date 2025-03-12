@@ -25,11 +25,11 @@
 1. 从以下链接下载模型文件：
    [best_model.pth](https://github.com/Chil1T/BingChongHaiCV/releases/tag/%E6%A8%A1%E5%9E%8B%E6%96%87%E4%BB%B6)
    
-2. 将下载的`best_model.pth`文件放置在项目的`models/`目录下
+2. clone 仓库 release分支后，将下载的`best_model.pth`文件放置在项目的`models/`目录下
 > 如果没有请自行创建一个
-#### 直接下载压缩包
+#### 或者  直接下载压缩包
 [BCHCVrelease.zip](https://github.com/Chil1T/BingChongHaiCV/releases/tag/%E9%A1%B9%E7%9B%AE)
-
+> 解压后即可开始安装与启动
 ### 安装与启动
 
 #### Windows用户（推荐）
