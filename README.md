@@ -27,7 +27,7 @@
    
 2. clone 仓库 release分支后，将下载的`best_model.pth`文件放置在项目的`models/`目录下
 > 如果没有请自行创建一个
-#### 或者  直接下载压缩包
+#### 或者  直接下载压缩包（推荐）
 [BCHCVrelease.zip](https://github.com/Chil1T/BingChongHaiCV/releases/tag/%E9%A1%B9%E7%9B%AE)
 > 解压后即可开始安装与启动
 ### 安装与启动
