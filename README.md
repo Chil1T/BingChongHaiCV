@@ -63,21 +63,6 @@ npm install
 cd ..
 ```
 
-#### 使用Docker部署（推荐用于生产环境）
-
-```bash
-# 构建并启动所有服务
-docker-compose up -d
-
-# 查看服务状态
-docker-compose ps
-
-# 查看日志
-docker-compose logs -f
-
-# 停止服务
-docker-compose down
-```
 
 #### 使用Python虚拟环境
 
