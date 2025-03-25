@@ -222,9 +222,8 @@ A: 为简化安装流程，我们已将后端的requirements.txt内容合并到�
 ## 技术支持
 
 如遇问题，请：
-1. 查看[常见问题文档](docs/faq.md)
-2. 提交[Issue](https://github.com/Chil1T/BingChongHaiCV/issues)
-3. 发送邮件至技术支持邮箱
+1. 提交[Issue](https://github.com/Chil1T/BingChongHaiCV/issues)
+2.  发送邮件至技术支持邮箱
 
 ## 更新日志
 
