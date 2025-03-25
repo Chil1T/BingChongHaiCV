@@ -1,251 +1,260 @@
-# 植物病虫害智能识别系统
+# 植物病虫害智能识别系统 (Release Version)
 
-基于ResNet50的深度学习植物病虫害识别系统，支持38种常见植物病害的高精度识别。
+基于ResNet50的深度学习植物病虫害识别系统，支持38种常见植物病害的高精度识别。本版本为稳定发布版，专注于系统的部署和使用。
 
-## 研究价值
+## 系统特点
 
-植物病虫害每年导致全球约40%的作物减产。本研究通过深度学习实现快速、准确的自动识别，具有显著的生产、环境和经济价值。
+- **高精度识别**: 支持38类植物病害，验证集准确率达99.70%
+- **快速响应**: 优化的推理流程，支持实时识别
+- **易于部署**: 提供详细安装指南
+- **用户友好**: 直观的Web界面，支持拖拽上传和实时预览
 
-## 核心技术
+## 系统要求
 
-- **数据**：PlantVillage数据集（54,305张图像，38类病害）
-- **模型**：ResNet50（残差连接、预训练权重）
-- **训练**：AdamW优化、余弦退火学习率、早停策略、混合精度
+- Python 3.9+
+- Node.js (推荐使用16.x或18.x版本)
+- 内存 >= 8GB
+- 硬盘空间 >= 2GB
 
-## 实验结果
+## 下载模型文件
 
-- **准确率**：训练集99.90%，验证集99.70%
-- **效率**：1.2小时完成训练（T4 GPU）
-- **关键发现**：
-  1. 模型部分依赖背景信息进行识别
-  2. 存在一定过拟合但保持良好泛化能力
+在使用系统前，请先下载预训练模型文件：
 
-## 系统实现
+1. 从以下链接下载模型文件：
+   [best_model.pth](https://your-model-hosting-url.com/best_model.pth)
+   
+2. 将下载的`best_model.pth`文件放置在项目的`models/`目录下
 
-- **前端**：React UI，实时预览，结果可视化
-- **后端**：Flask API，高效推理，完善错误处理
+## 安装与启动
 
-## 未来方向
-
-- **架构优化**：探索Vision Transformer、引入注意力机制
-- **数据策略**：混合训练、真实场景增强、对比学习
-- **应用拓展**：移动部署、多模态融合、预警系统
-
-## 快速开始
-
-### 环境要求
-
-- Python 3.7+
-- Node.js 14+
-- npm 6+
-
-### 一键安装与启动
-
-我们提供了一键安装与启动脚本，可以自动完成依赖安装和应用启动：
-
-#### Windows用户（推荐）
+### 选项1: 使用一键启动脚本（Windows用户推荐）
 
 ```bash
-# 管理员权限运行
+# 以管理员权限运行
 start_admin.bat
 ```
 
-此脚本会提供以下选项：
+此脚本提供以下选项：
 1. 安装依赖并启动应用
-   - 自动检测依赖是否已安装，避免重复安装
-   - 可选择国内镜像源或官方源
 2. 仅启动应用（已安装依赖）
 
-#### 单独安装依赖（如遇安装问题）
+### 选项2: 手动安装与启动（适用于所有平台）
 
-如果一键启动脚本无法正确安装依赖，可以使用专门的依赖安装脚本：
-
-```bash
-# 管理员权限运行
-install_deps.bat
-```
-
-此脚本专注于依赖安装，提供详细的安装步骤和错误反馈。
-
-#### 修复版安装脚本（推荐）
-
-如果您在安装过程中遇到pip升级错误或其他问题，请使用修复版安装脚本：
+#### 使用Conda虚拟环境（推荐）
 
 ```bash
-# 管理员权限运行
-install_deps_fixed.bat
+# 1. 创建conda环境
+conda create -n plant_disease python=3.9 -y
+conda activate plant_disease
+
+# 2. 清除可能存在的代理设置
+set HTTP_PROXY=
+set HTTPS_PROXY=
+set ALL_PROXY=
+
+# 3. 安装Python依赖
+pip install -r requirements.txt -i https://pypi.tuna.tsinghua.edu.cn/simple
+
+# 4. 安装前端依赖
+cd frontend
+npm install
+cd ../simple_frontend
+npm install
+cd ..
 ```
 
-此修复版脚本具有以下优势：
-- 更强的错误处理能力，即使某些依赖安装失败也会继续安装其他依赖
-- 跳过pip升级错误检查，避免常见的升级失败问题
-- 提供更详细的安装进度和错误反馈
-- 在安装结束时验证关键依赖是否成功安装
-
-#### 所有平台（Windows/macOS/Linux）
+#### 使用Docker部署（推荐用于生产环境）
 
 ```bash
-# 跨平台启动脚本
-python start_app.py
+# 构建并启动所有服务
+docker-compose up -d
+
+# 查看服务状态
+docker-compose ps
+
+# 查看日志
+docker-compose logs -f
+
+# 停止服务
+docker-compose down
 ```
 
-此脚本会自动检测操作系统，并使用适当的命令启动应用程序。
-
-### 停止应用程序
-
-当您需要停止应用程序时，可以使用以下方法：
-
-#### Windows用户
+#### 使用Python虚拟环境
 
 ```bash
-# 停止应用程序
-stop_app.bat
+# 1. 创建并激活虚拟环境
+python -m venv venv
+source venv/bin/activate  # Linux/macOS
+venv\Scripts\activate     # Windows
+
+# 2. 清除可能存在的代理设置
+# Linux/macOS
+unset HTTP_PROXY HTTPS_PROXY ALL_PROXY
+# Windows
+set HTTP_PROXY=
+set HTTPS_PROXY=
+set ALL_PROXY=
+
+# 3. 安装Python依赖
+pip install -r requirements.txt -i https://pypi.tuna.tsinghua.edu.cn/simple
+
+# 4. 安装前端依赖
+cd frontend
+npm install
+# 注意：前端依赖由package.json管理，无需额外的依赖文件
+
+# 5. 返回项目根目录
+cd ..
 ```
 
-#### 其他平台
+### 启动应用
 
-在运行应用程序的终端中按 `Ctrl+C` 停止服务。
+#### 启动后端
 
-## 使用说明
+```bash
+# 确保已激活虚拟环境
+cd backend
+python app.py
+```
 
-1. 上传植物图片（支持JPG、PNG格式，大小不超过5MB）
-2. 系统会自动识别图片中的植物病害
-3. 查看识别结果和防治建议
-4. 点击"支持疾病类型"查看系统支持的所有植物病害信息
-5. 点击"识别历史"查看历史识别记录
+#### 启动前端（在另一个终端窗口）
+
+```bash
+cd frontend
+npm start
+```
+
+我们已在前端的package.json中设置了Node.js兼容选项（NODE_OPTIONS=--openssl-legacy-provider），因此npm start应该可以正常运行。
+
+启动后，在浏览器中访问 http://localhost:3000
+
+## 停止应用
+
+在各自的终端窗口中按 `Ctrl+C` 停止前端和后端服务。
+
+## 使用指南
+
+1. 启动应用后，在浏览器中访问 http://localhost:3000
+2. 点击上传区域或拖拽图片进行上传（支持JPG、PNG格式，≤5MB）
+3. 等待系统识别（通常在1-2秒内完成）
+4. 查看识别结果和防治建议
+
+## 支持的病害类型
+
+系统当前支持38种常见植物病害的识别，包括：
+- 苹果：黑星病、疮痂病等
+- 葡萄：黑腐病、褐斑病等
+- 玉米：灰斑病、锈病等
+- 马铃薯：早疫病、晚疫病等
+- 番茄：叶霉病、斑点病等
+
+完整列表请参见[支持的病害类型](docs/supported_diseases.md)
 
 ## 项目结构
 
 ```
 BingChongHaiCV/
-├── backend/                # 后端服务
-│   ├── app/                # Flask应用
-│   │   ├── __init__.py     # 应用初始化
-│   │   ├── routes.py       # API路由
-│   │   └── utils/          # 工具函数
-│   ├── app.py              # 应用入口
-│   └── models/             # 模型定义
-├── frontend/               # 前端应用
-│   ├── public/             # 静态资源
-│   ├── src/                # 源代码
-│   │   ├── components/     # React组件
-│   │   ├── App.tsx         # 应用入口
-│   │   └── index.tsx       # 渲染入口
-│   ├── package.json        # 依赖配置
-│   └── tsconfig.json       # TypeScript配置
-├── datasets/               # 数据集（本地存储，不提交到Git）
-├── models/                 # 训练好的模型（本地存储，不提交到Git）
-├── notebooks/              # Jupyter笔记本
-├── scripts/                # 工具脚本
-├── requirements.txt        # Python依赖
-├── .gitignore              # Git忽略配置
-├── README.md               # 项目说明
-├── start_admin.bat         # Windows一键安装与启动脚本（管理员权限）
-├── install_deps.bat        # Windows专用依赖安装脚本（管理员权限）
-├── stop_app.bat            # Windows停止应用脚本
-└── start_app.py            # 跨平台启动脚本
+├── backend/                # Flask后端服务
+│   ├── app/               # 后端应用核心代码
+│   ├── app.py             # 后端入口文件
+│   ├── requirements.txt   # 后端依赖
+│   └── .env              # 后端环境配置
+├── frontend/              # React前端应用（主界面）
+│   ├── src/              # 前端源代码
+│   ├── public/           # 静态资源
+│   ├── package.json      # 前端依赖配置
+│   └── .env             # 前端环境配置
+├── simple_frontend/      # 简化版前端界面
+├── model/                # 模型相关代码
+├── data/                 # 数据集和训练数据
+├── docs/                 # 项目文档
+├── scripts/              # 工具脚本
+├── evaluation/           # 模型评估代码
+├── notebooks/            # Jupyter notebooks
+├── logs/                 # 日志文件
+├── config/               # 配置文件
+├── temp/                 # 临时文件
+├── requirements.txt      # 完整Python依赖
+├── start_admin.bat       # Windows启动脚本
+├── stop_app.bat          # 停止应用脚本
+├── docker-compose.yml    # Docker编排配置
+└── Dockerfile           # Docker构建文件
 ```
 
 ## 常见问题
 
-### Q: 系统提示"服务正在初始化"怎么办？
+### Q: 系统提示"模型文件不存在"怎么办？
 
-A: 后端服务需要一些时间加载模型，请耐心等待。如果长时间未响应，请检查后端服务是否正常运行。
+A: 请确保已下载模型文件并正确放置在`models/`目录下。
 
-### Q: 上传图片后提示"识别失败"怎么办？
+### Q: 前端启动时出现"digital envelope routines::unsupported"错误怎么办？
 
-A: 请确保上传的是清晰的植物图片，并且图片格式和大小符合要求。如果问题持续，可能是后端服务未正确启动。
+A: 这是由于Node.js版本过高导致的。我们已在package.json中添加了兼容设置，但如果仍有问题，可以：
 
-### Q: 如何关闭服务？
+1. 使用环境变量启动：
+   ```bash
+   # Windows
+   set NODE_OPTIONS=--openssl-legacy-provider
+   npm start
+   
+   # Linux/macOS
+   export NODE_OPTIONS=--openssl-legacy-provider
+   npm start
+   ```
 
-A: 如果使用一键启动脚本，可以按Ctrl+C关闭服务。如果手动启动，需要分别关闭前端和后端的命令行窗口。
+2. 使用兼容版本的Node.js (v16.x)：
+   ```bash
+   # 安装nvm后切换Node.js版本
+   nvm install 16
+   nvm use 16
+   ```
 
-### Q: 遇到npm权限错误怎么办？
+### Q: 启动时提示"端口被占用"怎么办？
 
-A: 如果遇到npm权限错误（EPERM: operation not permitted），请按以下步骤操作：
-1. 关闭所有命令行窗口
-2. 运行 `clean_npm_locks.bat` 清理npm锁定文件
-3. 使用 `start_app_admin.bat` 以管理员权限启动应用
+A: 请先检查是否有其他应用占用了相关端口：
+1. 后端默认使用5000端口，前端默认使用3000端口
+2. 可以通过修改后端的app.py文件来更改端口
+3. 对于前端，npm start时会自动提示是否使用其他端口
 
-### Q: 遇到PyTorch安装错误怎么办？
+### Q: 依赖安装失败或网络问题怎么办？
 
-A: 如果遇到PyTorch安装错误，可能是版本不兼容。请尝试以下解决方案：
-1. 修改 `backend/requirements.txt` 文件，使用CPU版本的PyTorch
-2. 手动安装PyTorch：`pip install torch==2.0.1 torchvision==0.15.2`
-
-### Q: 依赖安装很慢怎么办？
-
-A: 国内网络环境下依赖安装可能较慢，建议使用国内镜像源：
-1. 运行 `install_dependencies.bat` 或 `install_dependencies_admin.bat`（推荐）脚本
-2. 这些脚本会自动使用清华PyPI镜像和淘宝NPM镜像加速安装
-
-### Q: 手动配置国内镜像源的方法？
-
-A: 如果需要手动配置国内镜像源，可以使用以下命令：
-
-**Python/pip镜像源**:
+A: 尝试以下解决方案：
 ```bash
-# 临时使用
+# 完全清除代理设置
+set HTTP_PROXY=
+set HTTPS_PROXY=
+set ALL_PROXY=
+
+# 使用国内镜像源
 pip install -r requirements.txt -i https://pypi.tuna.tsinghua.edu.cn/simple
-
-# 永久设置
-pip config set global.index-url https://pypi.tuna.tsinghua.edu.cn/simple
-```
-
-**Node.js/npm镜像源**:
-```bash
-# 设置淘宝镜像
 npm config set registry https://registry.npmmirror.com
-npm config set disturl https://npmmirror.com/dist
 ```
 
-### Q: 启动脚本显示乱码怎么办？
+### Q: 后端的requirements.txt和根目录的requirements.txt有什么区别？
 
-A: 这是由于命令行编码问题导致的。请尝试以下解决方案：
-1. 在命令行中运行 `chcp 65001` 切换到UTF-8编码
-2. 使用最新版本的启动脚本，已添加编码设置
+A: 为简化安装流程，我们已将后端的requirements.txt内容合并到根目录的requirements.txt中。现在只需安装根目录的requirements.txt即可运行整个项目。
 
-### Q: 遇到"No module named 'flask'"错误怎么办？
+## 技术支持
 
-A: 这表明Flask依赖未正确安装。请尝试以下解决方案：
-1. 运行`install_deps_fixed.bat`脚本（推荐）专门安装依赖
-2. 手动安装Flask：`pip install flask==2.0.1 flask-cors==3.0.10`
-3. 确保在虚拟环境中运行：`call venv\Scripts\activate.bat`
+如遇问题，请：
+1. 查看[常见问题文档](docs/faq.md)
+2. 提交[Issue](https://github.com/Chil1T/BingChongHaiCV/issues)
+3. 发送邮件至技术支持邮箱
 
-### Q: 遇到pip升级错误怎么办？
+## 更新日志
 
-A: 如果在安装过程中遇到pip升级错误（如"ERROR: To modify pip..."），请尝试以下解决方案：
-1. 使用`install_deps_fixed.bat`脚本，它会跳过pip升级错误检查
-2. 手动运行pip安装命令：`python -m pip install -r requirements.txt -i https://pypi.tuna.tsinghua.edu.cn/simple`
-3. 如果仍然遇到问题，可以尝试在管理员权限的命令提示符中运行：`python -m pip install --upgrade pip`
+### v1.0.1 (2024-03-25)
+- 添加简化版前端界面
+- 优化项目结构，完善文档
+- 添加Docker部署支持
+- 修复已知bug
 
-### Q: 遇到"Numpy is not available"或NumPy兼容性错误怎么办？
-
-A: 这是由于NumPy 2.0与PyTorch等库的兼容性问题导致的。请尝试以下解决方案：
-
-1. 运行NumPy兼容性修复脚本：
-```bash
-# 管理员权限运行
-fix_numpy.bat
-```
-
-2. 或者手动降级NumPy到兼容版本：
-```bash
-# 在虚拟环境中执行
-pip uninstall -y numpy
-pip install numpy==1.24.4
-```
-
-3. 如果问题仍然存在，请尝试重新安装PyTorch：
-```bash
-pip uninstall -y torch torchvision
-pip install torch==2.0.1+cpu torchvision==0.15.2+cpu -f https://download.pytorch.org/whl/torch_stable.html
-```
-
-## 技术报告
-
-详细的实验分析和可视化结果请参见[技术报告](docs/technical_report.md)。
+### v1.0.0 (2024-03-12)
+- 首个稳定发布版本
+- 优化模型加载和推理性能
+- 改进用户界面交互体验
+- 增加详细的部署文档
 
 ## 许可证
 
-MIT License 
+本项目采用 MIT 许可证。详见 [LICENSE](LICENSE) 文件。 
