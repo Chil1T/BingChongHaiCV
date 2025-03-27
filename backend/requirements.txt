@@ -2,13 +2,13 @@
 # pip install -r requirements.txt -i https://pypi.tuna.tsinghua.edu.cn/simple
 flask==2.0.1
 flask-cors==3.0.10
-pillow==8.3.1
-numpy==1.21.1
+pillow==9.5.0
+numpy>=1.22.4
 werkzeug==2.0.1
 python-dotenv==0.19.0
 scikit-learn>=1.0.2
 tqdm>=4.65.0
-pandas>=2.2.1
+pandas>=2.0.0,<2.2.0
 
 # PyTorch相关依赖（CPU版本）
 --find-links https://download.pytorch.org/whl/torch_stable.html
